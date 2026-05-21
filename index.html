@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrir — Questionário de Pré-Consulta</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #B8960C;
+    --gold-light: #D4AF37;
+    --gold-pale: #F5EDD0;
+    --gold-border: #E2C97E;
+    --white: #FDFCF8;
+    --cream: #F8F5EE;
+    --dark: #1C1C1C;
+    --mid: #4A4A4A;
+    --light: #8A8A8A;
+    --error: #C0392B;
+    --success: #2E7D5B;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--white);
+    color: var(--dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--dark);
+    padding: 28px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+  }
+  .site-header::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 1px;
+    background: var(--gold-light);
+    margin: 14px auto 0;
+  }
+  .logo-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    letter-spacing: 10px;
+    color: var(--gold-light);
+    text-transform: uppercase;
+  }
+  .logo-sub {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    color: #A0A0A0;
+    text-transform: uppercase;
+  }
+  .dr-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--gold-border);
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: var(--cream);
+    border-bottom: 1px solid var(--gold-border);
+    padding: 16px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .step-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .step-count {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--light);
+  }
+  .progress-bar-bg {
+    height: 2px;
+    background: var(--gold-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* MAIN CONTAINER */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 50px 24px 80px;
+  }
+
+  /* STEPS */
+  .step { display: none; animation: fadeIn 0.4s ease; }
+  .step.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* STEP HEADER */
+  .step-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--gold-border);
+  }
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--gold-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .step-desc {
+    font-size: 14px;
+    color: var(--light);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* FORM GROUPS */
+  .form-grid { display: grid; gap: 24px; }
+  .form-grid-2 { grid-template-columns: 1fr 1fr; }
+  .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  label .req { color: var(--gold); margin-left: 2px; }
+
+  input[type=text],
+  input[type=email],
+  input[type=tel],
+  input[type=date],
+  input[type=number],
+  select,
+  textarea {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--dark);
+    background: var(--white);
+    border: 1px solid #DDD;
+    border-radius: 0;
+    padding: 13px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184,150,12,0.08);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8960C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+
+  /* HINT */
+  .hint { font-size: 12px; color: var(--light); font-style: italic; }
+
+  /* RADIO / CHECKBOX GROUPS */
+  .options-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .option-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .option-chip input { display: none; }
+  .option-chip span {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px;
+    border: 1px solid #DDD;
+    font-size: 13px;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .option-chip input:checked + span {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+    color: var(--dark);
+    font-weight: 500;
+  }
+  .option-chip span:hover { border-color: var(--gold-border); }
+
+  /* SCALE */
+  .scale-wrap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .scale-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+  .scale-item input { display: none; }
+  .scale-box {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #DDD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .scale-item input:checked + .scale-box {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: white;
+  }
+  .scale-box:hover { border-color: var(--gold); }
+  .scale-label { font-size: 10px; color: var(--light); letter-spacing: 0.5px; }
+
+  /* DIVIDER */
+  .section-divider {
+    margin: 32px 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gold-border);
+  }
+  .section-divider span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* BRISTOL SCALE */
+  .bristol-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .bristol-item { cursor: pointer; }
+  .bristol-item input { display: none; }
+  .bristol-card {
+    border: 1px solid #DDD;
+    padding: 10px 6px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .bristol-item input:checked + .bristol-card {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+  }
+  .bristol-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    display: block;
+  }
+  .bristol-desc {
+    font-size: 9px;
+    color: var(--light);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+
+  /* NAVIGATION BUTTONS */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--gold-border);
+  }
+  .btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .btn-back {
+    background: transparent;
+    color: var(--light);
+    border: 1px solid #DDD;
+  }
+  .btn-back:hover { border-color: var(--mid); color: var(--dark); }
+  .btn-next {
+    background: var(--dark);
+    color: var(--white);
+  }
+  .btn-next:hover { background: var(--gold); }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--white);
+    padding: 16px 48px;
+    font-size: 12px;
+    letter-spacing: 3px;
+  }
+  .btn-submit:hover {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(184,150,12,0.3);
+  }
+
+  /* WELCOME STEP */
+  .welcome-block {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .welcome-ornament {
+    font-size: 32px;
+    color: var(--gold-light);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .welcome-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: var(--dark);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .welcome-title em { font-style: italic; color: var(--gold); }
+  .welcome-text {
+    font-size: 15px;
+    color: var(--mid);
+    line-height: 1.9;
+    max-width: 500px;
+    margin: 0 auto 32px;
+    font-weight: 300;
+  }
+  .welcome-meta {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--cream);
+    border: 1px solid var(--gold-border);
+    padding: 18px 32px;
+    font-size: 12px;
+    color: var(--light);
+    margin-bottom: 40px;
+  }
+  .welcome-meta strong { color: var(--mid); font-weight: 500; }
+
+  /* SUCCESS */
+  .success-block {
+    text-align: center;
+    padding: 60px 20px;
+    display: none;
+  }
+  .success-block.show { display: block; animation: fadeIn 0.6s ease; }
+  .success-icon {
+    width: 70px;
+    height: 70px;
+    border: 1px solid var(--gold-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 26px;
+  }
+  .success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 400;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+  .success-text {
+    font-size: 15px;
+    color: var(--mid);
+    line-height: 1.8;
+    max-width: 460px;
+    margin: 0 auto 32px;
+    font-weight: 300;
+  }
+
+  /* FOOTER */
+  .site-footer {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid var(--gold-border);
+    background: var(--cream);
+    font-size: 11px;
+    color: var(--light);
+    letter-spacing: 1px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+    .logo-mark { font-size: 32px; }
+    .welcome-title { font-size: 28px; }
+    .step-title { font-size: 24px; }
+    .bristol-grid { grid-template-columns: repeat(4, 1fr); }
+    .container { padding: 32px 16px 60px; }
+    .progress-wrap { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <!-- Logo Amanda Guerra recriado como SVG -->
+  <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:150px;margin-bottom:12px;">
+    <defs>
+      <!-- Caminho para o texto superior "AMANDA GUERRA" -->
+      <path id="arc-top" d="M 38,130 A 92,92 0 0,1 222,130"/>
+      <!-- Caminho para o texto inferior "nutrição de precisão" -->
+      <path id="arc-bot" d="M 222,138 A 92,92 0 0,1 38,138"/>
+    </defs>
+
+    <!-- Círculo externo -->
+    <circle cx="130" cy="130" r="118" fill="none" stroke="#D4AF37" stroke-width="1"/>
+
+    <!-- Maçã watermark (muito sutil) -->
+    <g opacity="0.07" fill="#D4AF37" transform="translate(84,62)">
+      <path d="M46,8 C46,8 52,0 62,2 C62,2 60,12 50,12 C40,12 46,8 46,8Z"/>
+      <path d="M46,14 C22,14 8,32 8,52 C8,72 18,96 32,96 C38,96 42,92 46,92 C50,92 54,96 60,96 C74,96 84,72 84,52 C84,32 70,14 46,14Z"/>
+    </g>
+
+    <!-- AG Monograma -->
+    <!-- Letra A -->
+    <text x="78" y="158" font-family="Cormorant Garamond, Georgia, serif" font-size="90" font-weight="300" fill="#D4AF37" opacity="0.95" letter-spacing="-8">A</text>
+    <!-- Letra G por cima, levemente deslocada -->
+    <text x="110" y="158" font-family="Cormorant Garamond, Georgia, serif" font-size="90" font-weight="300" fill="#1C1C1C" opacity="0.92" letter-spacing="-8">G</text>
+    <!-- Linha horizontal decorativa (barra do G estendida) -->
+    <line x1="78" y1="133" x2="190" y2="133" stroke="#D4AF37" stroke-width="0.8" opacity="0.6"/>
+
+    <!-- AMANDA GUERRA em arco superior -->
+    <text font-family="Jost, sans-serif" font-size="11" font-weight="500" fill="#D4AF37" letter-spacing="3.5">
+      <textPath href="#arc-top" startOffset="50%" text-anchor="middle">AMANDA GUERRA</textPath>
+    </text>
+
+    <!-- Pontos decorativos laterais -->
+    <text x="30" y="136" font-family="serif" font-size="10" fill="#D4AF37" text-anchor="middle">•</text>
+    <text x="230" y="136" font-family="serif" font-size="10" fill="#D4AF37" text-anchor="middle">•</text>
+
+    <!-- nutrição de precisão em arco inferior (script/itálico) -->
+    <text font-family="Cormorant Garamond, Georgia, serif" font-size="11.5" font-style="italic" font-weight="400" fill="#D4AF37" letter-spacing="1">
+      <textPath href="#arc-bot" startOffset="50%" text-anchor="middle">nutrição de precisão</textPath>
+    </text>
+  </svg>
+
+  <div class="logo-sub" style="margin-top:0;">Questionário de Pré-Consulta</div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-info">
+    <span class="step-label" id="stepLabel">Boas-vindas</span>
+    <span class="step-count" id="stepCount">1 de 9</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill" style="width: 11%"></div>
+  </div>
+</div>
+
+<!-- MAIN FORM -->
+<main class="container">
+<form id="mainForm" novalidate>
+
+  <!-- ─── STEP 0: BOAS-VINDAS ─────────────────────────────────── -->
+  <div class="step active" data-step="0">
+    <div class="welcome-block">
+      <span class="welcome-ornament">✦</span>
+      <h1 class="welcome-title">Bem-vinda à sua<br>jornada de <em>saúde</em></h1>
+      <p class="welcome-text">
+        Este questionário foi preparado com cuidado para que possamos conhecer você de forma completa — seus hábitos, sua história e seus objetivos — antes de nos encontrarmos.
+        <br><br>
+        Responda com tranquilidade e honestidade. Todas as informações são confidenciais e serão utilizadas exclusivamente para personalizar o seu atendimento.
+      </p>
+      <div class="welcome-meta">
+        <span><strong>Tempo estimado:</strong> 10–15 minutos</span>
+        <span><strong>Confidencialidade:</strong> Total e garantida</span>
+        <span><strong>Profissional:</strong> Dra. Amanda Guerra — CRN-3</span>
+      </div>
+    </div>
+    <div class="nav-buttons" style="justify-content: flex-end;">
+      <button type="button" class="btn btn-next" onclick="goNext()">Começar &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 1: IDENTIFICAÇÃO ────────────────────────────────── -->
+  <div class="step" data-step="1">
+    <div class="step-header">
+      <div class="step-icon">✦</div>
+      <h2 class="step-title">Identificação</h2>
+      <p class="step-desc">Vamos começar com seus dados básicos. Essas informações nos ajudam a personalizar seu atendimento.</p>
+    </div>
+    <div class="form-grid form-grid-2">
+      <div class="form-group full">
+        <label>Nome completo <span class="req">*</span></label>
+        <input type="text" name="nome" placeholder="Seu nome completo" required>
+      </div>
+      <div class="form-group">
+        <label>Data de nascimento <span class="req">*</span></label>
+        <input type="date" name="nascimento" required>
+      </div>
+      <div class="form-group">
+        <label>Sexo biológico <span class="req">*</span></label>
+        <select name="sexo" required>
+          <option value="">Selecione</option>
+          <option>Feminino</option>
+          <option>Masculino</option>
+          <option>Prefiro não informar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" name="email" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp <span class="req">*</span></label>
+        <input type="tel" name="whatsapp" placeholder="(00) 00000-0000" required>
+      </div>
+      <div class="form-group">
+        <label>Profissão / Ocupação</label>
+        <input type="text" name="profissao" placeholder="Ex: Professora, empresária…">
+      </div>
+      <div class="form-group">
+        <label>Estado civil</label>
+        <select name="estadoCivil">
+          <option value="">Selecione</option>
+          <option>Solteira(o)</option>
+          <option>Casada(o) / União estável</option>
+          <option>Divorciada(o)</option>
+          <option>Viúva(o)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tem filhos?</label>
+        <select name="filhos">
+          <option value="">Selecione</option>
+          <option>Não</option>
+          <option>Sim, 1</option>
+          <option>Sim, 2</option>
+          <option>Sim, 3 ou mais</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Peso atual (kg)</label>
+        <input type="number" name="peso" placeholder="Ex: 65" min="30" max="250" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Altura (cm)</label>
+        <input type="number" name="altura" placeholder="Ex: 165" min="100" max="220">
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2: OBJETIVO ─────────────────────────────────────── -->
+  <div class="step" data-step="2">
+    <div class="step-header">
+      <div class="step-icon">◎</div>
+      <h2 class="step-title">O que te trouxe até aqui?</h2>
+      <p class="step-desc">Marque todos os objetivos e queixas que se aplicam à sua situação. Seja generosa nas respostas.</p>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Principais objetivos <span class="req">*</span></label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="emagrecimento"><span>Emagrecimento</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="ganho_massa"><span>Ganho de massa muscular</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="saude_intestinal"><span>Saúde intestinal</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="mais_energia"><span>Mais energia e disposição</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="ansiedade_alimentar"><span>Relação saudável com comida</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="hormonal"><span>Saúde hormonal</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="imunidade"><span>Imunidade</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="pele_cabelo"><span>Pele e cabelo</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="qualidade_vida"><span>Qualidade de vida geral</span></label>
+          <label class="option-chip"><input type="checkbox" name="objetivo" value="outro"><span>Outro</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Em suas palavras, qual é sua principal queixa hoje?</label>
+        <textarea name="queixaPrincipal" placeholder="Conte com liberdade o que está te incomodando, o que te motivou a buscar acompanhamento nutricional…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Há quanto tempo apresenta esses sintomas / queixas?</label>
+        <select name="tempoQueixa">
+          <option value="">Selecione</option>
+          <option>Menos de 3 meses</option>
+          <option>3 a 6 meses</option>
+          <option>6 meses a 1 ano</option>
+          <option>1 a 3 anos</option>
+          <option>Mais de 3 anos</option>
+          <option>A vida toda</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Já fez acompanhamento nutricional antes?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="nutAntes" value="nao"><span>Não, é a primeira vez</span></label>
+          <label class="option-chip"><input type="radio" name="nutAntes" value="sim_pouco"><span>Sim, por pouco tempo</span></label>
+          <label class="option-chip"><input type="radio" name="nutAntes" value="sim_varios"><span>Sim, várias vezes</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>O que espera alcançar com nosso acompanhamento?</label>
+        <textarea name="expectativa" placeholder="Descreva sua expectativa, o resultado que considera um sucesso para você…"></textarea>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3: HÁBITOS ALIMENTARES ─────────────────────────── -->
+  <div class="step" data-step="3">
+    <div class="step-header">
+      <div class="step-icon">◈</div>
+      <h2 class="step-title">Hábitos Alimentares</h2>
+      <p class="step-desc">Me conte um pouco sobre a sua rotina com a alimentação. Não existe resposta certa ou errada.</p>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Quantas refeições você faz por dia (em média)?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="refeicoes" value="1-2"><span>1 a 2</span></label>
+          <label class="option-chip"><input type="radio" name="refeicoes" value="3"><span>3</span></label>
+          <label class="option-chip"><input type="radio" name="refeicoes" value="4-5"><span>4 a 5</span></label>
+          <label class="option-chip"><input type="radio" name="refeicoes" value="6+"><span>6 ou mais</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Você costuma tomar café da manhã?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="cafemanha" value="sempre"><span>Sempre</span></label>
+          <label class="option-chip"><input type="radio" name="cafemanha" value="as_vezes"><span>Às vezes</span></label>
+          <label class="option-chip"><input type="radio" name="cafemanha" value="nunca"><span>Nunca / pulo</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Quem prepara suas refeições geralmente?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="quemCozinha" value="eu"><span>Eu mesma(o)</span></label>
+          <label class="option-chip"><input type="radio" name="quemCozinha" value="familia"><span>Familiar / cônjuge</span></label>
+          <label class="option-chip"><input type="radio" name="quemCozinha" value="restaurante"><span>Restaurante / delivery</span></label>
+          <label class="option-chip"><input type="radio" name="quemCozinha" value="misto"><span>Misto</span></label>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Preferências e restrições</span></div>
+
+      <div class="form-group">
+        <label>Possui restrições ou alergias alimentares?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="restricao" value="gluten"><span>Glúten</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="lactose"><span>Lactose</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="amendoim"><span>Amendoim</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="frutos_mar"><span>Frutos do mar</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="ovo"><span>Ovo</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="nenhuma"><span>Nenhuma</span></label>
+          <label class="option-chip"><input type="checkbox" name="restricao" value="outra"><span>Outra</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Segue algum padrão alimentar?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="padrao" value="onivoro"><span>Onívora(o)</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="vegetariano"><span>Vegetariana(o)</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="vegano"><span>Vegana(o)</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="sem_gluten"><span>Sem glúten</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="sem_lactose"><span>Sem lactose</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="low_carb"><span>Low carb</span></label>
+          <label class="option-chip"><input type="radio" name="padrao" value="outro"><span>Outro</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Alimentos que não gosta ou evita (por gosto)</label>
+        <textarea name="naoGosta" placeholder="Ex: fígado, jiló, couve, frutos do mar…"></textarea>
+      </div>
+
+      <div class="section-divider"><span>Comportamento alimentar</span></div>
+
+      <div class="form-group">
+        <label>Com que frequência consome ultraprocessados (refrigerantes, biscoitos, embutidos, fast food)?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="ultraprocessados" value="nunca"><span>Nunca / raramente</span></label>
+          <label class="option-chip"><input type="radio" name="ultraprocessados" value="1-2_semana"><span>1–2x por semana</span></label>
+          <label class="option-chip"><input type="radio" name="ultraprocessados" value="3-5_semana"><span>3–5x por semana</span></label>
+          <label class="option-chip"><input type="radio" name="ultraprocessados" value="diario"><span>Diariamente</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Quantidade de água / líquidos por dia</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="agua" value="menos1"><span>Menos de 1L</span></label>
+          <label class="option-chip"><input type="radio" name="agua" value="1-2"><span>1 a 2L</span></label>
+          <label class="option-chip"><input type="radio" name="agua" value="2-3"><span>2 a 3L</span></label>
+          <label class="option-chip"><input type="radio" name="agua" value="mais3"><span>Mais de 3L</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Consome álcool?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="alcool" value="nunca"><span>Não</span></label>
+          <label class="option-chip"><input type="radio" name="alcool" value="ocasional"><span>Ocasionalmente</span></label>
+          <label class="option-chip"><input type="radio" name="alcool" value="fim_semana"><span>Fins de semana</span></label>
+          <label class="option-chip"><input type="radio" name="alcool" value="frequente"><span>Frequentemente</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Descreva um dia alimentar típico seu (do café da manhã até a noite)</label>
+        <textarea name="diaAlimentar" placeholder="Ex: Manhã: café com leite e pão. Almoço: arroz, feijão, frango grelhado. Lanche: fruta. Jantar: sopa…" style="min-height: 120px;"></textarea>
+        <span class="hint">Quanto mais detalhado, mais preciso será nosso plano</span>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 4: SAÚDE INTESTINAL ─────────────────────────────── -->
+  <div class="step" data-step="4">
+    <div class="step-header">
+      <div class="step-icon">◉</div>
+      <h2 class="step-title">Saúde Intestinal & Digestiva</h2>
+      <p class="step-desc">Esta é uma das partes mais importantes do nosso questionário. Fique à vontade — aqui é um espaço seguro e sem julgamentos.</p>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Com que frequência você evacua?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="evacuacao" value="mais3_dia"><span>3+ vezes ao dia</span></label>
+          <label class="option-chip"><input type="radio" name="evacuacao" value="1-2_dia"><span>1–2x ao dia</span></label>
+          <label class="option-chip"><input type="radio" name="evacuacao" value="dia_sim_nao"><span>Dia sim, dia não</span></label>
+          <label class="option-chip"><input type="radio" name="evacuacao" value="2-3_semana"><span>2–3x na semana</span></label>
+          <label class="option-chip"><input type="radio" name="evacuacao" value="menos2_semana"><span>Menos de 2x/sem</span></label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Consistência das fezes — Escala de Bristol<br><small style="font-size:11px;color:var(--light);text-transform:none;letter-spacing:0">Escolha o tipo que melhor descreve o habitual</small></label>
+        <div class="bristol-grid">
+          <label class="bristol-item"><input type="radio" name="bristol" value="1">
+            <div class="bristol-card"><span class="bristol-num">1</span><div class="bristol-desc">Bolinhas duras, separadas</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="2">
+            <div class="bristol-card"><span class="bristol-num">2</span><div class="bristol-desc">Formato irregular, grumoso</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="3">
+            <div class="bristol-card"><span class="bristol-num">3</span><div class="bristol-desc">Salsichinha com rachaduras</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="4">
+            <div class="bristol-card"><span class="bristol-num">4</span><div class="bristol-desc">Salsichinha lisa e macia</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="5">
+            <div class="bristol-card"><span class="bristol-num">5</span><div class="bristol-desc">Pedaços macios com bordas</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="6">
+            <div class="bristol-card"><span class="bristol-num">6</span><div class="bristol-desc">Pedaços pastosos / flocos</div></div>
+          </label>
+          <label class="bristol-item"><input type="radio" name="bristol" value="7">
+            <div class="bristol-card"><span class="bristol-num">7</span><div class="bristol-desc">Aquosa, sem pedaços</div></div>
+          </label>
+        </div>
+        <span class="hint">Tipo 3 e 4 são considerados ideais</span>
+      </div>
+
+      <div class="section-divider"><span>Sintomas digestivos</span></div>
+
+      <div class="form-group">
+        <label>Quais sintomas você apresenta com frequência? (marque todos)</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="gases"><span>Gases e flatulência</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="distensao"><span>Distensão / barriga inchada</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="constipacao"><span>Constipação (intestino preso)</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="diarreia"><span>Diarreia frequente</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="alternancia"><span>Alternância prisão/diarreia</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="dor_abdominal"><span>Dor ou cólica abdominal</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="refluxo"><span>Refluxo / queimação</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="nausea"><span>Náuseas</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="azia"><span>Azia / má digestão</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="mucofezes"><span>Muco nas fezes</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="urgencia"><span>Urgência para ir ao banheiro</span></label>
+          <label class="option-chip"><input type="checkbox" name="sintomaIntestinal" value="nenhum"><span>Nenhum desses</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Percebe algum alimento que piora seus sintomas digestivos?</label>
+        <textarea name="alimentosPiora" placeholder="Ex: trigo, leite, feijão, alimentos gordurosos, café…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Já teve diagnóstico de alguma condição intestinal?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="sii"><span>Síndrome do Intestino Irritável (SII)</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="doenca_crohn"><span>Doença de Crohn</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="retocolite"><span>Retocolite ulcerativa</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="celíaquia"><span>Doença celíaca</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="sibo"><span>SIBO (supercrescimento bacteriano)</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="candidiase"><span>Candidíase intestinal</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="h_pylori"><span>H. pylori</span></label>
+          <label class="option-chip"><input type="checkbox" name="diagnosticoIntestinal" value="nenhum"><span>Nenhum diagnóstico</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Usa ou já usou antibióticos nos últimos 12 meses?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="antibiotico" value="nao"><span>Não</span></label>
+          <label class="option-chip"><input type="radio" name="antibiotico" value="sim_1"><span>Sim, 1 vez</span></label>
+          <label class="option-chip"><input type="radio" name="antibiotico" value="sim_2_mais"><span>Sim, 2 ou mais vezes</span></label>
+          <label class="option-chip"><input type="radio" name="antibiotico" value="sim_cronico"><span>Uso crônico</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Complemento — algo sobre sua saúde digestiva que queira destacar</label>
+        <textarea name="complementoIntestinal" placeholder="Qualquer observação adicional que considere relevante…"></textarea>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 5: HISTÓRICO DE SAÚDE ──────────────────────────── -->
+  <div class="step" data-step="5">
+    <div class="step-header">
+      <div class="step-icon">✚</div>
+      <h2 class="step-title">Histórico de Saúde</h2>
+      <p class="step-desc">Seu histórico clínico é essencial para um acompanhamento seguro e individualizado.</p>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Possui alguma condição de saúde diagnosticada?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="diabetes"><span>Diabetes / pré-diabetes</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="hipertensao"><span>Hipertensão</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="hipotireoidismo"><span>Hipotireoidismo</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="hipertireoidismo"><span>Hipertireoidismo</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="hashimoto"><span>Hashimoto</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="sop"><span>SOP</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="ansiedade"><span>Ansiedade</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="depressao"><span>Depressão</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="obesidade"><span>Obesidade</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="cancer"><span>Câncer (histórico)</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="autoimune"><span>Doença autoimune</span></label>
+          <label class="option-chip"><input type="checkbox" name="condicaoSaude" value="nenhuma"><span>Nenhuma</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Outras condições não listadas acima</label>
+        <textarea name="outrasCondicoes" placeholder="Descreva qualquer outra condição de saúde relevante…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Usa algum medicamento de forma contínua?</label>
+        <textarea name="medicamentos" placeholder="Ex: levotiroxina, metformina, anticoncepcional, antidepressivo… (inclua nome e dose se souber)"></textarea>
+        <span class="hint">Inclua também fitoterápicos e suplementos prescritos por médico</span>
+      </div>
+      <div class="form-group">
+        <label>Toma algum suplemento por conta própria?</label>
+        <textarea name="suplementos" placeholder="Ex: vitamina D, ômega-3, probiótico, magnésio, colágeno…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Realizou exames laboratoriais recentes? Há menos de 6 meses?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="examesRecentes" value="sim_trago"><span>Sim — trarei na consulta</span></label>
+          <label class="option-chip"><input type="radio" name="examesRecentes" value="sim_nao_tenho"><span>Sim, mas não tenho mais</span></label>
+          <label class="option-chip"><input type="radio" name="examesRecentes" value="nao"><span>Não realizei</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Histórico familiar relevante (doenças na família)</label>
+        <textarea name="historicoFamiliar" placeholder="Ex: diabetes na família paterna, câncer de cólon na mãe, doenças cardíacas…"></textarea>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 6: ESTILO DE VIDA ───────────────────────────────── -->
+  <div class="step" data-step="6">
+    <div class="step-header">
+      <div class="step-icon">◌</div>
+      <h2 class="step-title">Estilo de Vida</h2>
+      <p class="step-desc">Sono, estresse e movimento são pilares fundamentais da saúde. Queremos entender sua rotina completa.</p>
+    </div>
+    <div class="form-grid">
+
+      <div class="section-divider"><span>Sono</span></div>
+
+      <div class="form-group form-grid form-grid-2">
+        <div class="form-group">
+          <label>Quantas horas dorme por noite (em média)?</label>
+          <select name="horasSono">
+            <option value="">Selecione</option>
+            <option>Menos de 5h</option>
+            <option>5–6h</option>
+            <option>6–7h</option>
+            <option>7–8h</option>
+            <option>Mais de 8h</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qualidade do seu sono</label>
+          <select name="qualidadeSono">
+            <option value="">Selecione</option>
+            <option>Excelente — acordo descansada(o)</option>
+            <option>Boa — acordo bem</option>
+            <option>Regular — poderia ser melhor</option>
+            <option>Ruim — acordo cansada(o)</option>
+            <option>Péssima — insônia frequente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tem dificuldade para dormir ou manter o sono?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="problemaSono" value="dificuldade_dormir"><span>Dificuldade para pegar no sono</span></label>
+          <label class="option-chip"><input type="checkbox" name="problemaSono" value="acorda_noite"><span>Acorda no meio da noite</span></label>
+          <label class="option-chip"><input type="checkbox" name="problemaSono" value="muito_cedo"><span>Acorda muito cedo</span></label>
+          <label class="option-chip"><input type="checkbox" name="problemaSono" value="apneia"><span>Apneia do sono</span></label>
+          <label class="option-chip"><input type="checkbox" name="problemaSono" value="nenhum"><span>Sem problemas</span></label>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Estresse</span></div>
+
+      <div class="form-group">
+        <label>Como você avalia seu nível de estresse atual?</label>
+        <div class="scale-wrap">
+          <label class="scale-item"><input type="radio" name="estresse" value="1"><div class="scale-box">1</div><span class="scale-label">Baixo</span></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="2"><div class="scale-box">2</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="3"><div class="scale-box">3</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="4"><div class="scale-box">4</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="5"><div class="scale-box">5</div><span class="scale-label">Médio</span></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="6"><div class="scale-box">6</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="7"><div class="scale-box">7</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="8"><div class="scale-box">8</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="9"><div class="scale-box">9</div></label>
+          <label class="scale-item"><input type="radio" name="estresse" value="10"><div class="scale-box">10</div><span class="scale-label">Alto</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Principais fontes de estresse no seu dia a dia</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="trabalho"><span>Trabalho / carreira</span></label>
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="financeiro"><span>Finanças</span></label>
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="relacionamentos"><span>Relacionamentos</span></label>
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="filhos"><span>Filhos</span></label>
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="saude"><span>Saúde própria</span></label>
+          <label class="option-chip"><input type="checkbox" name="fonteEstresse" value="nenhum"><span>Nenhum especial</span></label>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Atividade física</span></div>
+
+      <div class="form-group">
+        <label>Pratica alguma atividade física?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="atividade" value="nao"><span>Não pratico</span></label>
+          <label class="option-chip"><input type="radio" name="atividade" value="ocasional"><span>Ocasionalmente</span></label>
+          <label class="option-chip"><input type="radio" name="atividade" value="1-2"><span>1–2x por semana</span></label>
+          <label class="option-chip"><input type="radio" name="atividade" value="3-4"><span>3–4x por semana</span></label>
+          <label class="option-chip"><input type="radio" name="atividade" value="5+"><span>5+ vezes por semana</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Qual tipo de atividade?</label>
+        <input type="text" name="tipoAtividade" placeholder="Ex: musculação, pilates, corrida, yoga, caminhada…">
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 7: SAÚDE HORMONAL & EMOCIONAL ──────────────────── -->
+  <div class="step" data-step="7">
+    <div class="step-header">
+      <div class="step-icon">◇</div>
+      <h2 class="step-title">Saúde Hormonal & Emocional</h2>
+      <p class="step-desc">A relação entre hormônios, emoções e alimentação é profunda. Suas respostas nos ajudam a enxergar o quadro completo.</p>
+    </div>
+    <div class="form-grid">
+
+      <!-- Seção feminina condicional -->
+      <div id="secaoFeminina">
+        <div class="section-divider"><span>Ciclo menstrual (se aplicável)</span></div>
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label>Seu ciclo menstrual é regular?</label>
+            <select name="cicloRegular">
+              <option value="">Selecione</option>
+              <option>Sim, regular</option>
+              <option>Irregular</option>
+              <option>Não tenho ciclo (menopausa / hormônio)</option>
+              <option>Não se aplica</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Usa anticoncepcional?</label>
+            <select name="anticoncepcional">
+              <option value="">Selecione</option>
+              <option>Não</option>
+              <option>Sim — pílula</option>
+              <option>Sim — DIU hormonal</option>
+              <option>Sim — injeção</option>
+              <option>Sim — implante</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 24px;">
+          <label>Apresenta sintomas de TPM?</label>
+          <div class="options-group">
+            <label class="option-chip"><input type="checkbox" name="tpm" value="inchaço"><span>Inchaço</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="irritabilidade"><span>Irritabilidade / choro</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="compulsao"><span>Compulsão alimentar</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="dor"><span>Dores e cólicas fortes</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="ansiedade"><span>Ansiedade intensa</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="nenhuma"><span>Sem TPM</span></label>
+            <label class="option-chip"><input type="checkbox" name="tpm" value="na"><span>Não se aplica</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Relação com a alimentação</span></div>
+
+      <div class="form-group">
+        <label>Você come por razões emocionais (estresse, ansiedade, tédio, tristeza)?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="comerEmocional" value="nunca"><span>Raramente / nunca</span></label>
+          <label class="option-chip"><input type="radio" name="comerEmocional" value="as_vezes"><span>Às vezes</span></label>
+          <label class="option-chip"><input type="radio" name="comerEmocional" value="frequente"><span>Com frequência</span></label>
+          <label class="option-chip"><input type="radio" name="comerEmocional" value="sempre"><span>Quase sempre</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Já vivenciou episódios de compulsão alimentar (comer muito rápido, em grande quantidade, com sensação de perda de controle)?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="compulsao" value="nunca"><span>Nunca</span></label>
+          <label class="option-chip"><input type="radio" name="compulsao" value="raramente"><span>Raramente</span></label>
+          <label class="option-chip"><input type="radio" name="compulsao" value="as_vezes"><span>Às vezes</span></label>
+          <label class="option-chip"><input type="radio" name="compulsao" value="frequente"><span>Com frequência</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Como é sua relação com seu corpo e autoimagem?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="autoimagem" value="positiva"><span>Positiva — me aceito bem</span></label>
+          <label class="option-chip"><input type="radio" name="autoimagem" value="neutra"><span>Neutra</span></label>
+          <label class="option-chip"><input type="radio" name="autoimagem" value="dificil"><span>Difícil — me critico muito</span></label>
+          <label class="option-chip"><input type="radio" name="autoimagem" value="muito_dificil"><span>Muito difícil — me angustia</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Como se sente em relação à sua energia e disposição no dia a dia?</label>
+        <div class="options-group">
+          <label class="option-chip"><input type="radio" name="energia" value="otima"><span>Ótima — me sinto bem</span></label>
+          <label class="option-chip"><input type="radio" name="energia" value="boa"><span>Boa, mas oscila</span></label>
+          <label class="option-chip"><input type="radio" name="energia" value="ruim"><span>Baixa — cansaço constante</span></label>
+          <label class="option-chip"><input type="radio" name="energia" value="pessima"><span>Péssima — exaustão</span></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Algo mais que queira compartilhar sobre sua saúde emocional e hormonal?</label>
+        <textarea name="complementoEmocional" placeholder="Sinta-se à vontade para compartilhar o que considerar relevante…"></textarea>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 8: REVISÃO & ENVIO ──────────────────────────────── -->
+  <div class="step" data-step="8">
+    <div class="step-header">
+      <div class="step-icon">✓</div>
+      <h2 class="step-title">Última etapa</h2>
+      <p class="step-desc">Antes de enviar, use este espaço para qualquer informação que não foi contemplada e confirme seus dados.</p>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Gostaria de adicionar alguma informação que não foi abordada?</label>
+        <textarea name="observacaoFinal" placeholder="Este é o seu espaço livre — qualquer informação adicional que julgue importante compartilhar com a Dra. Amanda…" style="min-height: 120px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Como você ficou sabendo da Clínica Nutrir?</label>
+        <select name="comoConheceu">
+          <option value="">Selecione</option>
+          <option>Instagram</option>
+          <option>Indicação de amigo / familiar</option>
+          <option>Indicação médica</option>
+          <option>Google</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="form-group" style="background: var(--cream); border: 1px solid var(--gold-border); padding: 20px;">
+        <label>Confirmação e consentimento</label>
+        <div class="options-group" style="margin-top: 12px;">
+          <label class="option-chip">
+            <input type="checkbox" name="consentimento" value="ok" required>
+            <span style="font-size: 13px; line-height: 1.6;">Confirmo que as informações fornecidas são verdadeiras e autorizo a Dra. Amanda Guerra a utilizá-las exclusivamente para fins do meu acompanhamento nutricional, respeitando o sigilo e a confidencialidade.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button type="button" class="btn btn-back" onclick="goBack()">← Voltar</button>
+      <button type="button" class="btn btn-submit" onclick="submitForm()">Enviar Questionário ✦</button>
+    </div>
+  </div>
+
+</form>
+
+<!-- SUCCESS -->
+<div class="success-block" id="successBlock">
+  <div class="success-icon">✦</div>
+  <h2 class="success-title">Questionário enviado</h2>
+  <p class="success-text">
+    Obrigada por dedicar esse tempo e se abrir conosco.<br>
+    Suas respostas foram recebidas e serão analisadas com cuidado pela Dra. Amanda Guerra antes da sua consulta.<br><br>
+    <em style="color: var(--gold);">Nos vemos em breve.</em>
+  </p>
+  <div style="font-size: 12px; color: var(--light); letter-spacing: 1px;">Clínica Nutrir · Nutrição Clínica Funcional</div>
+</div>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  Clínica Nutrir &nbsp;·&nbsp; Dra. Amanda Guerra &nbsp;·&nbsp; Nutrição Clínica Funcional &nbsp;·&nbsp; Todas as informações são confidenciais
+</footer>
+
+<script>
+  const STEPS = 9;
+  let current = 0;
+
+  const labels = [
+    'Boas-vindas',
+    'Identificação',
+    'Objetivos',
+    'Hábitos Alimentares',
+    'Saúde Intestinal',
+    'Histórico de Saúde',
+    'Estilo de Vida',
+    'Saúde Hormonal & Emocional',
+    'Envio'
+  ];
+
+  function updateProgress() {
+    const pct = Math.round(((current + 1) / STEPS) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('stepLabel').textContent = labels[current];
+    document.getElementById('stepCount').textContent = (current + 1) + ' de ' + STEPS;
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.step')[n].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateProgress();
+  }
+
+  function goNext() {
+    if (current < STEPS - 1) {
+      current++;
+      showStep(current);
+    }
+  }
+
+  function goBack() {
+    if (current > 0) {
+      current--;
+      showStep(current);
+    }
+  }
+
+  function submitForm() {
+    const consent = document.querySelector('input[name=consentimento]');
+    if (!consent || !consent.checked) {
+      alert('Por favor, confirme o consentimento para prosseguir.');
+      return;
+    }
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('successBlock').classList.add('show');
+    document.getElementById('progressWrap').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Init
+  updateProgress();
+</script>
+
+</body>
+</html>
